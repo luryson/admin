@@ -79,7 +79,7 @@ class BaseRoleController extends Controller
         $show['selected_permissions'] = [];
         foreach ($permissions as $value) {
 
-            $show['selected_permissions'][] = [$value->permission_id];
+            $show['selected_permissions'][] = $value->permission_id;
         }
 
         $treeView = $this->getTreeView($show['permissions'], $show['selected_permissions']);
@@ -114,7 +114,7 @@ class BaseRoleController extends Controller
 
                 $node['nodes'] = array_map(function($item) use($node, $permissions) {
 
-                    $checked = isset($permissions[$item['id']]) ? true: false;
+                    $checked = in_array($item['id'], $permissions) ? true: false;
 
                     return [
                         'text' => $item['description'].$this->getUrl($item),
