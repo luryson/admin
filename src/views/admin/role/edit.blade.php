@@ -45,7 +45,7 @@
                     </div>
                     <div class="box-footer text-left">
                         <input name='id' type="hidden"  value='{{isset($show['role']->id)?$show['role']->id:''}}'/>
-                        <input id="permission_ids" class="hide" type="hidden" value="{{ implode(",", array_keys($show['selected_permissions'])) }}" />
+                        <input id="permission_ids" class="hide" type="hidden" value="{{ implode(",", $show['selected_permissions']) }}" />
                         <button type="submit" class="btn btn-primary" id="saveBtn">保存</button>
                     </div>
                 </form>
