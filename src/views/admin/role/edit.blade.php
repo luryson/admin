@@ -19,7 +19,7 @@
             </div>
             @endif
             <div class="box">
-                <form action="{{isset($show['role']->id)?'/admin/role/update/'.$show['role']->id:'/admin/role/create/'}}" method="post">
+                <form action="{{isset($show['role']->id)?'/admin/role/update/'.$show['role']->id:'/admin/role/create/'}}" method="post" id="form">
                     <div class="box-header">
                     </div><!-- /.box-header -->
                     <div class="box-body table-responsive no-padding">
@@ -46,7 +46,7 @@
                     <div class="box-footer text-left">
                         <input name='id' type="hidden"  value='{{isset($show['role']->id)?$show['role']->id:''}}'/>
                         <input id="permission_ids" class="hide" type="hidden" value="{{ implode(",", array_keys($show['selected_permissions'])) }}" />
-                        <button type="submit" class="btn btn-primary">保存</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">保存</button>
                     </div>
                 </form>
             </div>
