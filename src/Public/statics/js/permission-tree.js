@@ -1,3 +1,7 @@
+/**
+ * Created by nerd on 16/1/21.
+ */
+
 ;(function ($) {
 
     'use strict';
@@ -9,7 +13,7 @@
         showIcon: false
     };
 
-    Array.prototype.unique = function() {
+     Array.prototype.unique = function() {
 
         var res = [];
         var json = {};
@@ -24,16 +28,13 @@
 
     Array.minus = function(a, b) {
 
-        var length = b.length;
-        for (var item = 0; item < length;  item++) {
+        var index = a.indexOf(b);
+        if (index >= 0) {
 
-            var index = a.indexOf(b[item]);
-            if (index >= 0) {
-
-                a.splice(index, 1);
-            }
+            a.splice(index, 1);
         }
         return a;
+
     };
 
     var _PermTreeManager = {
@@ -42,42 +43,39 @@
         checkPerm: function(event, node) {
 
             var treeView = $(event.target),
-                parentId = node.parentId,
-                checkedIds = [node.href];
+                parentId = node.parentId;
 
-            if (undefined == parentId) { // parent node
+            if (undefined == parentId) { // if children node
 
-                $(treeView).treeview(true).checkNode(node.nodeId);
-                var children = node.nodes,
+                $(treeView).treeview(true).checkNode(node.nodeId); // just check itself
+                var children = node.nodes, // get children
                     length = children.length,
                     ifCheckChildren = true;
 
-                for (var i = 0; i < length; i++) {
+                for (var i = 0; i < length; i++) { // loop to check if there is need to check children
 
                     var child = children[i];
                     if (child.state.checked) {
 
                         ifCheckChildren = false;
+                        break;
                     }
                 }
 
                 if (ifCheckChildren) {
 
-                    checkedIds.concat(this.checkChildren(treeView, children));
+                    this.checkChildren(treeView, children)
                 }
 
-            } else { // child node
+            } else { // if parent node
 
                 $(treeView).treeview(true).checkNode(parentId);
             }
-
-            return checkedIds;
         },
         // uncheck target node and child nodes if exist
         uncheckPerm: function(event, node) {
 
-            var unchecked_ids = [node.href],
-                children = node.nodes,
+            var children = node.nodes,
                 treeView = $(event.target);
 
             if (children) {
@@ -90,28 +88,19 @@
                 }
             }
 
-            var parent_id = this.uncheckParent(event, node);
-            if (parent_id) {
-
-                unchecked_ids.push(parent_id);
-            }
-
-            return unchecked_ids;
+            $(treeView).treeview(true).uncheckNode(node.nodeId);
+            this.uncheckParent(event, node);
         },
         // check parent if exists
         checkChildren: function(treeView, children) {
 
-            var checkedIds = [],
-                length = children.length;
+            var length = children.length;
 
             for (var i = 0; i < length; i++) {
 
                 var child = children[i];
                 $(treeView).treeview(true).checkNode(child.nodeId);
-                checkedIds.push(child.href);
             }
-
-            return checkedIds;
         },
         // uncheck parent if siblings are all unchecked
         uncheckParent: function(event, node) {
@@ -129,25 +118,22 @@
                     if (siblings[i].state.checked) {
 
                         ifUncheckParent = false;
+                        break;
                     }
                 }
 
                 if (ifUncheckParent) {
 
                     $(treeView).treeview(true).uncheckNode(parent.nodeId);
-
-                    return parent.href;
                 }
             }
-
-            return null;
         }
 
     };
 
     var _onNodeChecked = function(event, node) {
 
-        var checked_ids = _PermTreeManager.checkPerm(event, node);
+        _PermTreeManager.checkPerm(event, node);
 
         var permission_ids_elem = $("#permission_ids");
         var permission_ids = $(permission_ids_elem).val();
@@ -162,14 +148,14 @@
             });
         }
 
-        permission_ids = permission_ids.concat(checked_ids).unique().sort();
+        permission_ids = permission_ids.concat(node.href).unique().sort();
 
         $(permission_ids_elem).val(permission_ids.join(','));
     };
 
     var _onNodeUnchecked = function(event, node) {
 
-        var unchecked_ids = _PermTreeManager.uncheckPerm(event, node);
+        _PermTreeManager.uncheckPerm(event, node);
 
         var permission_ids_elem = $("#permission_ids");
         var permission_ids = $(permission_ids_elem).val();
@@ -184,9 +170,8 @@
             });
         }
 
-        permission_ids = Array.minus(permission_ids, unchecked_ids).sort();
+        permission_ids = Array.minus(permission_ids, node.href).sort();
         $(permission_ids_elem).val(permission_ids.join(','));
-
     };
 
 
@@ -208,9 +193,5 @@
             });
         });
     }
-
-
-
-
 
 })(jQuery);
