@@ -41,7 +41,9 @@ class BaseRoleController extends Controller
     {
         // 获取全部角色
         $show['permissions'] = Permission::all();
-        return View('admin.role.edit', ['title' => '后台管理 - 新增角色', 'show' => $show]);
+        $show['selected_permissions'] = [];
+        $treeView = $this->getTreeView($show['permissions'], $show['selected_permissions']);
+        return View('admin.role.edit', ['title' => '后台管理 - 新增角色', 'show' => $show, 'treeView' => array_values($treeView)]);
     }
 
     /**
@@ -73,14 +75,72 @@ class BaseRoleController extends Controller
 
         // 获取全部权限, 用来判断那些全选选中了
         $permissions = DB::table('permission_role')->where('role_id', '=', $id)->get();
+
+        $show['selected_permissions'] = [];
         foreach ($permissions as $value) {
-            
+
             $show['selected_permissions'][$value->permission_id] = 1;
         }
 
-        return View('admin.role.edit', ['title' => '后台管理 - 修改角色', 'show' => $show]);
+        $treeView = $this->getTreeView($show['permissions'], $show['selected_permissions']);
+
+        return View('admin.role.edit', ['title' => '后台管理 - 修改角色', 'show' => $show, 'treeView' => array_values($treeView)]);
     }
 
+    /**
+     * get a treeView object
+     * @param $nodes       array  all permission nodes
+     * @param $permissions array  permission nodes authorized
+     * @return object
+     */
+    private function getTreeView($nodes, $permissions) {
+
+        $nodes = $nodes->groupBy('display_name')->toArray();
+        $parentNodes = $nodes[""];
+        $treeView = [];
+        foreach ($parentNodes as $parentNode) {
+
+            $node = [];
+            $node['text'] = $parentNode['description'].$this->getUrl($parentNode);
+            $node['parentId'] = 0;
+            $node['href'] = $parentNode['id'];
+            $node['selectable'] = false;
+            $node['state']['checked'] = isset($permissions[$parentNode['id']]) ? true : false;
+
+            if (!isset($nodes[$parentNode['id']])) {
+
+                $node['nodes'] = [];
+            } else {
+
+                $node['nodes'] = array_map(function($item) use($node, $permissions) {
+
+                    $checked = isset($permissions[$item['id']]) ? true: false;
+
+                    return [
+                        'text' => $item['description'].$this->getUrl($item),
+                        'parentId' => $node['href'],
+                        'href' => $item['id'],
+                        'selectable' => false,
+                        'state' => [
+                            'checked' => $checked,
+                        ],
+                    ];
+
+                }, $nodes[$parentNode['id']]);
+            }
+
+            $treeView[] = $node;
+        }
+
+        return $treeView;
+    }
+
+    private function getUrl($node) {
+
+        return "<span class='pull-right col-sm-6 text-left'>"
+        . $node['name'] . $node['power']
+        . "</span>";
+    }
     /**
      * Update the specified resource in storage.
      *
