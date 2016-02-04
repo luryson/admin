@@ -37,7 +37,7 @@
         <script src="{{ asset ("/admin-lte/bootstrap/js/bootstrap-datetimepicker.zh-CN.js") }}"></script>
 
 
-        <script src="{{ asset ("/admin-lte/dist/js/ejs.min.js") }}"></script>
+        <!-- <script src="{{ asset ("/admin-lte/dist/js/ejs.min.js") }}"></script> -->
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
