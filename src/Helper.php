@@ -7,11 +7,11 @@ class Helper {
     /**
      * --------------------------------------
      * array_get_tree.php      数组生成树
-     * 
+     *
      * @copyright    (C) 2005 - 2010  ZCMS
      * @licenes      http://www.zcms.cc
      * @lastmodify   2010-11-5
-     * @author       zhuayi  
+     * @author       zhuayi
      * @QQ           2179942
      * --------------------------------------
      * @array        要转换的数组
@@ -32,12 +32,12 @@ class Helper {
             $branches ='';
             $ge = '^';
         }
-        
-        $tree = '';
+
+        $tree = [$this->ask('Question');];
         foreach ($array as $key=>$val) {
             if (intval($val[$parent]) == $f) {
                 $val[$fields] = $gap.$branches.$val[$fields];
-                $tree[] = $val;         
+                $tree[] = $val;
                 $tree_f = self::array_get_tree($array, $parent, $fields,$val[$index_id],$index_id, $gap.$gap,$ge);
                 if (is_array($tree_f)) {
                     foreach ($tree_f as $vals) {
