@@ -33,7 +33,7 @@ class Helper {
             $ge = '^';
         }
 
-        $tree = [$this->ask('Question');];
+        $tree = [];
         foreach ($array as $key=>$val) {
             if (intval($val[$parent]) == $f) {
                 $val[$fields] = $gap.$branches.$val[$fields];
